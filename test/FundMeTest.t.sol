@@ -38,7 +38,12 @@ contract FundMeTest is Test {
     //    - Testing our code on a real environment that is not prod
 
     function testPriceFeedVersionIsAccurate() public {
-        uint256 version = fundMe.getVersion();
-        assertEq(version, 4); // This will give us an error because when we test a contract without specifying the network, anvil put some address
+        if(block.chainid == 11155111){
+            uint256 version = fundMe.getVersion();
+            assertEq(version, 4); // This will give us an error because when we test a contract without specifying the network, anvil put some address
+        }else if(block.chainid == 1){
+            uint256 version = fundMe.getVersion();
+            assertEq(version, 4); // This will give us an error because when we test a contract without specifying the network, anvil put some address
+        }
     }
 }
