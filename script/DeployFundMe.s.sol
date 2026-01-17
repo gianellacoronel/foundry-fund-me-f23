@@ -15,7 +15,7 @@ contract DeployFundMe is Script{
         // After startBroadcast -> "real" tx (transaction)
         vm.startBroadcast();
         // Mock
-        new FundMe(ethUsdPriceFeed);
+        FundMe fundMe = new FundMe(ethUsdPriceFeed);
         vm.stopBroadcast();
         return fundMe;
     }
