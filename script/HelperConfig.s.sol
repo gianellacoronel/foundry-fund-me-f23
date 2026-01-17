@@ -37,7 +37,10 @@ contract HelperConfig is Script{
     }
     //Like we are using vm, we can't have this function pure
     function getAnvilEthConfig() public returns (NetworkConfig memory) {
-
+        if(activeNetworkConfig.priceFeed != address(0)){
+            // If we already deployed a price feed address, return it
+            return activeNetworkConfig;
+        }
         // price feed address
         // 1. Deploy the mocks
         // 2. Return the mock address
