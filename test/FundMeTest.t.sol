@@ -46,4 +46,10 @@ contract FundMeTest is Test {
             assertEq(version, 4); // This will give us an error because when we test a contract without specifying the network, anvil put some address
         }
     }
+
+    function testFundFailsWithoutEnoughETH() public {
+        vm.expectRevert();
+        // This operation will fail
+        fundMe.fund(); // -> BUT, this will make a successful test
+    }
 }
