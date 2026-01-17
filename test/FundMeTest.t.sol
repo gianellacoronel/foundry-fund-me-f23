@@ -26,10 +26,10 @@ contract FundMeTest is Test {
     }
 
     function testOwnerIsMsgSender() public {
-        console.log(fundMe.i_owner());
+        console.log(fundMe.getOwner());
         console.log(msg.sender);
         // assertEq(fundMe.i_owner(), msg.sender);  // -> This will not work because the sender is different that the address which deploy the contract
-        assertEq(fundMe.i_owner(), msg.sender); // -> This will work because the sender is the same that the address which deploy the contract (address(this))
+        assertEq(fundMe.getOwner(), msg.sender); // -> This will work because the sender is the same that the address which deploy the contract (address(this))
     }
 
     // What can we do to work with addresses outside our system?
@@ -74,12 +74,32 @@ contract FundMeTest is Test {
         assertEq(funder, USER);
     }
 
-    function testOnlyOwnerCanWithdraw() public {
+    modifier funded() {
         vm.prank(USER);
         fundMe.fund{value: SEND_VALUE}();
+        _;
+    }
 
+    function testOnlyOwnerCanWithdraw() public funded {
         vm.expectRevert();
         vm.prank(USER);
         fundMe.withdraw();
+    }
+
+    function testWithdrawWithASingleFunder() public funded {
+        // Arrange - Setup
+        uint256 startingOwnerBalance = fundMe.getOwner().balance;
+        uint256 startingFundMeBalance = address(fundMe).balance;
+
+        // Act
+        vm.prank(fundMe.getOwner());
+        fundMe.withdraw();
+
+        // Assert
+        uint256 endingOwnerBalance = fundMe.getOwner().balance;
+        uint256 endingFundMeBalance = address(fundMe).balance;
+
+        assertEq(endingFundMeBalance, 0);
+        assertEq(startingFundMeBalance + startingOwnerBalance, endingOwnerBalance);
     }
 }
